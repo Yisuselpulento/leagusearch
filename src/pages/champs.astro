@@ -1,0 +1,35 @@
+---
+import CardChamp from "../components/CardChamp.astro";
+import FilterIcon from "../components/icons/FilterIcon.astro";
+import Layout from "../layouts/Layout.astro";
+import { fetchData } from "../services/champs";
+
+const champs = await fetchData()
+---
+
+<Layout title="champs">
+    <div class='flex flex-col gap-6 w-full md:p-24 p-2 pt-20'>
+      <div>
+        <p class='text-3xl font-bold'>LoL Champions Search</p>
+        <p class='text-lg'>Descubre la mejor build para cada Campeon</p>
+      </div>
+      <div class='flex gap-3 items-center'>
+        <FilterIcon class="size-6" />
+        <p class='font-bold hidden md:block'>Filtrar</p>
+        <input
+          type='search'
+          class='border-1 block h-12 w-[300px] text-black  rounded-md border border-double bg-gray-300 border-slate-800 border-transparent dark:bg-[linear-gradient(#000,#000),linear-gradient(to_right,#334454,#334454)]	bg-origin-border px-3 py-2 dark:text-slate-200 transition-all duration-500 [background-clip:padding-box,_border-box] placeholder:text-slate-500 focus:bg-[linear-gradient(#ddd,#ddd),linear-gradient(to_right,#2344A1,#0A1B4B)]  dark:focus:bg-[linear-gradient(#000,#000),linear-gradient(to_right,#2344A1,#0A1B4B)] focus:outline-none '
+          placeholder='Buscar campeón...'
+        />
+      </div>
+
+      <div class='flex md:gap-2 md:flex-wrap md:flex-row flex-col md:p-5 p-1 mb-4  dark:bg-black dark:bg-opacity-30 bg-gray-200 h-[1000px] overflow-auto scrollbar scrollbar-thumb-indigo-700 rounded border-[1px] dark:border-gray-700 border-gray-200 shadow'>
+        {champs?.map( champ => (
+          <CardChamp champ={champ}  />
+        ))}
+      </div>
+
+    </div>
+
+
+</Layout>

@@ -1,0 +1,15 @@
+---
+
+const { item } = Astro.props
+---
+
+<a
+class="relative border border-blue-900"
+href={`../item/${item.image.full}`}
+>
+<img
+  class='w-[50px] h-[50px] absolute'
+  src={`https://ddragon.leagueoflegends.com/cdn/14.6.1/img/item/${item.image.full}`}
+/>
+<div class="relative cursor-pointer size-[50px] overflow-hidden  before:bg-gradient-to-r before:from-white before:to-gray-700  before:w-[96px] before:h-[130px] before:absolute before:rotate-12 before:opacity-10 before:top-0 before:right-0 transition before:duration-200  before:translate-x-[100px] hover:before:-translate-y-7 hover:before:translate-x-[10px] "></div>
+</a>

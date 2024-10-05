@@ -1,0 +1,74 @@
+---
+import Close from "./icons/Close.astro"
+import NavIcon from "./icons/NavIcon.astro"
+import ThemeToggle from "./ThemeToggle.astro"
+
+const links = {
+  inicio: { name: "Inicio", href: "/" },
+  champs: { name: "Campeones", href: "/champs" },
+  items: { name: "Items", href: "/items" },
+  about: { name: "Sobre nosotros", href: "/about" },
+  register: { name: "Registrate", href: "/register" },
+};
+
+const baseClass = "md:font-normal font-bold dark:hover:text-indigo-600 hover:text-blue-700";
+---
+
+<header class="fixed top-0 mx-auto z-50 w-full dark:bg-opacity-45 bg-opacity-10 backdrop-blur-sm rounded flex flex-col items-end">
+  <button
+    class="menu-button md:hidden flex items-end dark:bg-blue-900 bg-gray-300 dark:bg-opacity-80 bg-opacity-80 shadow rounded-full p-2 m-3 dark:hover:bg-blue-950 hover:bg-gray-200">
+    <NavIcon class="toggle-icon size-7" />
+    <Close class="toggle-icon-2 hidden size-7" />
+  </button>
+  <nav
+    class="menu-open hidden md:flex md:justify-between md:flex-row flex-col md:items-center px-3 py-3 h-full md:h-full gap-6 md:gap-0 items-end dark:bg-neutral-600 bg-gray-400 w-full rounded dark:bg-opacity-45 bg-opacity-45 md:dark:bg-opacity-0 md:bg-opacity-0 backdrop-blur-sm">
+    <a class="rounded-full bg-gradient-to-r from-blue-600 to-blue-700 dark:from-gray-200 dark:to-gray-300 p-2" href="/" rel="noopener noreferrer">
+      <img class="size-6" src="/MonssterLogo.webp" alt="logo de mi portafolio" />
+    </a>
+    <div class="flex md:justify-between md:items-center gap-5 md:flex-row flex-col items-end pb-4 md:pb-0">
+      <div class="flex md:gap-6 gap-10 md:flex-row flex-col items-end md:items-center">
+        {Object.entries(links).map(([key, link]) => (
+          <a id={`${key}-link`} href={link.href} class={baseClass} rel="noopener noreferrer">{link.name}</a>
+        ))}
+      </div>
+    </div>
+    <div class="flex gap-4 md:flex-row flex-col md:items-center items-end">
+      <a class="bg-blue-950 px-3 py-2 rounded-lg hover:bg-blue-900 border dark:border-gray-800 border-blue-900 text-white" href="/favorites" rel="noopener noreferrer">Favoritos</a>
+      <ThemeToggle />
+    </div>
+  </nav>
+</header>
+
+<script>
+  document.addEventListener('astro:page-load', () => {
+    const button = document.querySelector(".menu-button");
+    const menu = document.querySelector('.menu-open');
+    const navIcon = document.querySelector('.toggle-icon');
+    const close = document.querySelector('.toggle-icon-2');
+    const currentPath = window.location.pathname;
+
+    Object.entries({
+      inicio: "/",
+      champs: "/champs",
+      items: "/items",
+      about: "/about",
+      register: "/register"
+    }).forEach(([key, path]) => {
+      const linkElement = document.getElementById(`${key}-link`);
+      if (path === currentPath) {
+        linkElement.classList.add("text-blue-700", "dark:text-indigo-600", "font-bold");
+      } else {
+        linkElement.classList.remove("text-blue-700", "dark:text-indigo-600", "font-bold");
+      }
+    });
+
+    button.addEventListener('click', handleChangeNav);
+
+    function handleChangeNav() {
+      navIcon.classList.toggle('hidden');
+      close.classList.toggle('hidden');
+      menu.classList.toggle("hidden");
+      menu.classList.toggle("flex");
+    }
+  });
+</script>

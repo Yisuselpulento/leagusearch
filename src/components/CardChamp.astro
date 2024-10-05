@@ -1,0 +1,30 @@
+---
+
+ const { champ } = Astro.props
+
+---
+
+    <div >
+         <a
+         class="flex flex-row md:flex-col md:gap-2 gap-4 bg-blue-950 md:bg-transparent  p-1 rounded-lg relative"
+            href={`../champs/${champ}`}
+          >
+          <img
+            class='md:w-[80px] w-[80px] absolute'
+            src={`https://ddragon.leagueoflegends.com/cdn/14.6.1/img/champion/${champ}.png`}
+          />
+          <div class="relative cursor-pointer size-[80px] overflow-hidden  before:bg-gradient-to-r before:from-white before:to-gray-700  before:w-[96px] before:h-[130px] before:absolute before:rotate-12 before:opacity-10 before:top-0 before:right-0 transition before:duration-200  before:translate-x-[100px] hover:before:-translate-y-7 hover:before:translate-x-[10px] "></div>
+          <p>{champ}</p>
+          
+
+          </a>
+        
+      <button
+          class="dark:bg-blue-700 bg-blue-900 dark:hover:bg-opacity-10  text-white dark:bg-opacity-20 px-3 py-1 rounded hover:bg-opacity-80 border border-blue-900 w-full md:w-[82px] m-2 "
+      >Agregar
+      </button>
+    </div>
+  
+
+
+

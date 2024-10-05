@@ -1,0 +1,33 @@
+---
+import CardItems from "../components/CardItems.astro";
+import FilterIcon from "../components/icons/FilterIcon.astro";
+import Layout from "../layouts/Layout.astro";
+import { fetchDataItems } from "../services/champs";
+
+const items = await fetchDataItems()
+---
+
+<Layout title="items">
+    <div class='flex flex-col gap-6 w-full md:p-24 p-2 pt-20'>
+        <div class='max-w-[1000px]'>
+          <p class='text-3xl font-bold'>League of Legends Items</p>
+          <p class='text-xl'>Todos los elementos del juego de League of Legends, incluidos elementos míticos, legendarios, iniciales y consumibles. Estadísticas actualizadas, pasivos, activos y costos de oro.</p>
+        </div>
+        <div class='flex gap-3 items-center'>
+          <FilterIcon class="size-6" />
+          <p class='font-bold hidden md:block'>Filtrar</p>
+          <input
+            type='search'
+             class='border-1 block h-12 w-[300px] text-black  rounded-md border border-double bg-gray-300 border-slate-800 border-transparent dark:bg-[linear-gradient(#000,#000),linear-gradient(to_right,#334454,#334454)]	bg-origin-border px-3 py-2 dark:text-slate-200 transition-all duration-500 [background-clip:padding-box,_border-box] placeholder:text-slate-500 focus:bg-[linear-gradient(#ddd,#ddd),linear-gradient(to_right,#2344A1,#0A1B4B)]  dark:focus:bg-[linear-gradient(#000,#000),linear-gradient(to_right,#2344A1,#0A1B4B)] focus:outline-none '
+            placeholder='Search items...'
+          />
+        </div>
+        <div class='flex gap-5 flex-wrap p-5 mb-5 rounded dark:bg-black dark:bg-opacity-30 bg-gray-100 h-[1000px] md:w-[1500px] overflow-auto scrollbar scrollbar-thumb-indigo-700 w-full border-[1px] dark:border-gray-700 border-gray-200'>
+          {items?.map( item => (
+            <CardItems item={item}  />
+          ))}
+  
+        </div>
+      </div>
+  
+</Layout>

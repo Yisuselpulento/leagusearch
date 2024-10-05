@@ -1,0 +1,80 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { fetchChampionDetails, fetchData } from "../../services/champs";
+
+const { id } = Astro.params
+
+ let champ = null
+
+if (id) {
+    champ = await fetchChampionDetails(id)
+}
+ 
+
+
+export async function getStaticPaths() {
+  
+ const champs = await fetchData()
+
+ return champs.map(champ => ({
+    params: {id: champ}
+ }))
+ 
+}
+---
+
+<Layout title={`${id}`}>
+    <div class='flex flex-col gap-6 w-full md:p-16 pt-16'>
+        {champ
+          ? <div class='flex flex-col gap-5 w-screen md:w-full text-white '>
+            <a
+              class=' hover:text-indigo-500 w-[20px] pl-3 dark:text-white text-gray-800 text-lg ml-2'
+              href='/champs'
+            >Atras</a>
+  
+            <div class="flex flex-col gap-5 relative shadow-lg">
+
+              <div class=' p-10 bg-cover bg-no-repeat rounded-lg w-full h-full absolute opacity-70' style={{ backgroundImage: `url('https://ddragon.leagueoflegends.com/cdn/img/champion/splash/${champ.id}_0.jpg')` }}>
+               
+              </div>
+              <div class="  bg-gradient-to-t from-black via-transparent to-black  flex relative md:p-10 p-4 flex-col gap-6">
+               <div class='flex gap-5'>
+  
+                  <img
+                    class='border border-yellow-500 rounded h-[100px]'
+                    src={`https://ddragon.leagueoflegends.com/cdn/14.6.1/img/champion/${champ.id}.png`}
+                  />
+                  <div class='flex flex-col gap-3'>
+                    <p class='text-2xl font-bold'> {champ.name}</p>
+                    <div class='flex flex-wrap md:gap-5 gap-3'>
+                      {champ.spells?.map(spell  => (
+                              <img
+                              class='md:w-[50px] w-[40px]'
+
+                                src={`https://ddragon.leagueoflegends.com/cdn/14.6.1/img/spell/${spell.image.full}`}
+                              />
+                      ))}
+                    </div>
+                  </div>
+               </div>
+                <p>{champ.lore}</p> 
+             </div>
+                </div>
+      
+  
+            <div class='flex flex-row gap-5 w-full md:w-[1000px] overflow-auto scrollbar scrollbar-thumb-indigo-700 p-4 shadow-lg'>
+              {champ.skins?.map( skin  => (
+               <div class="  border border-yellow-300 rounded min-h-[210px] min-w-[100px] overflow-hidden"> 
+                      <img
+                        class='object-cover w-full h-full duration-300 hover:scale-110'
+                        src={`https://ddragon.leagueoflegends.com/cdn/img/champion/loading/${champ.id}_${skin.num}.jpg`}
+                   />
+                </div> 
+  
+              ))}
+            </div>
+          </div>
+          : <p>loading...</p>}
+      </div>
+
+</Layout>
