@@ -1,5 +1,5 @@
 import { useState } from "preact/hooks"
-import Alert from "./Alert.astro"
+import { Alert } from "./Alert"
 
 const FormRegister = () => {
     const [formData, setFormData] = useState({
@@ -9,6 +9,7 @@ const FormRegister = () => {
         email: ''
       })
       const [alert, setAlert] = useState({})
+  
     
       const handleChange = (e) => {
         const { name, value } = e.target
@@ -22,7 +23,7 @@ const FormRegister = () => {
         e.preventDefault()
         const errors = {}
     
-        // Validación de campos vacíos
+
         for (const key in formData) {
           if (formData[key] === '') {
             setAlert({
@@ -34,7 +35,7 @@ const FormRegister = () => {
           }
         }
     
-        // Validación de usuario único y longitud máxima de 10 caracteres
+
         if (formData.usuario.length > 10 || formData.usuario.length < 4) {
           setAlert({
             msg: 'Usuario no puede tener más de 10 caracteres o menos de 4',
@@ -43,7 +44,7 @@ const FormRegister = () => {
           return
         }
     
-        // Validación de contraseñas coincidentes y longitud máxima de 20 caracteres
+
         if (formData.password !== formData.repeatPassword) {
           setAlert({
             msg: 'Las contraseñas no coinciden',
@@ -58,8 +59,7 @@ const FormRegister = () => {
           })
           return
         }
-    
-        // Validación de email único y formato válido
+
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
         if (!emailRegex.test(formData.email)) {
           setAlert({
@@ -69,7 +69,7 @@ const FormRegister = () => {
           return
         }
     
-        // Establecer errores si los hay
+
         if (Object.keys(errors).length === 0) {
           setAlert({
             msg: 'Registro exitoso',
@@ -77,7 +77,7 @@ const FormRegister = () => {
           })
         }
       }
-
+ 
      const inputClassname = "dark:bg-black dark:bg-opacity-20 dark:text-white bg-white text-black p-2 w-full border border-[#383864]" 
   return (
     <form
@@ -134,7 +134,6 @@ const FormRegister = () => {
     </div>
     <button
       className='dark:bg-blue-700 dark:bg-opacity-20 bg-blue-950  rounded hover:bg-opacity-90 dark:hover:bg-opacity-60  uppercase p-4 w-full font-bold text-lg text-white'
-      type='submit'
     >Registrar
     </button>
     {alert.msg && <Alert alert={alert} />}  
