@@ -52,6 +52,11 @@ const statList = [
   { label: 'Rango de ataque', value: stats.attackrange },
   { label: 'Regen. vida', value: stats.hpregen },
 ]
+
+// DDragon incluye los CHROMAS dentro de skins (marcados con parentSkin), pero
+// esos no tienen arte de loading (dan 403) -> se veian recuadros rotos/repetidos.
+// Filtramos los chromas: solo skins reales (sin parentSkin).
+const realSkins = (champ?.skins ?? []).filter(s => s.parentSkin === undefined)
 ---
 
 <Layout title={champ ? champ.name : id}>
@@ -208,7 +213,7 @@ const statList = [
         <div class='flex flex-col gap-3'>
           <h2 class='text-2xl font-bold'>Aspectos</h2>
           <div class='flex flex-row gap-5 w-full overflow-x-auto scrollbar scrollbar-thumb-indigo-700 pb-4'>
-            {champ.skins?.map(skin => (
+            {realSkins.map(skin => (
               <div class="flex flex-col gap-2 shrink-0">
                 <div class="border border-yellow-300 rounded h-[210px] w-[120px] overflow-hidden">
                   <img
