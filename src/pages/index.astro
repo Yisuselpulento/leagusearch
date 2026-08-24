@@ -3,7 +3,7 @@ import Layout from '../layouts/Layout.astro';
 import SearchBar from '../components/SearchBar'
 import { fetchData } from '../services/champs'
 
-const champs = await fetchData()
+const champs = (await fetchData()).map(c => ({ id: c.id, name: c.name }))
 ---
 
 <Layout title="League of Search">

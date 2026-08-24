@@ -23,12 +23,13 @@ const items = await fetchDataItems()
             placeholder='Search items...'
           />
         </div>
-        <div class='flex gap-5 flex-wrap p-5 mb-5 rounded dark:bg-black dark:bg-opacity-30 bg-gray-100 h-[1000px] md:w-[1500px] overflow-auto scrollbar scrollbar-thumb-indigo-700 w-full border-[1px] dark:border-gray-700 border-gray-200'>
+        <div id='item-grid' class='grid gap-3 content-start justify-start p-5 mb-5 rounded dark:bg-black dark:bg-opacity-30 bg-gray-100 max-h-[1000px] md:w-[1500px] overflow-auto scrollbar scrollbar-thumb-indigo-700 w-full border-[1px] dark:border-gray-700 border-gray-200' style='grid-template-columns: repeat(auto-fill, 50px);'>
           {items?.map( item => (
             <CardItems item={item}  />
           ))}
 
         </div>
+        <p id='item-empty' class='hidden text-gray-400'>No se encontraron items.</p>
       </div>
 
       <script>
@@ -36,12 +37,17 @@ const items = await fetchDataItems()
           const input = document.getElementById('item-filter')
           if (!input) return
           const cards = Array.from(document.querySelectorAll('.item-card'))
+          const empty = document.getElementById('item-empty')
           input.addEventListener('input', () => {
             const term = input.value.toLowerCase().trim()
+            let visible = 0
             cards.forEach(card => {
               const name = card.getAttribute('data-name') || ''
-              card.style.display = name.includes(term) ? '' : 'none'
+              const match = name.includes(term)
+              card.style.display = match ? '' : 'none'
+              if (match) visible++
             })
+            if (empty) empty.classList.toggle('hidden', visible !== 0)
           })
         })
       </script>

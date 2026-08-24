@@ -5,7 +5,8 @@ export const fetchData = async () => {
   try {
     const response = await axios(`${DDRAGON_CDN}/data/en_US/champion.json`)
     const { data } = response.data
-    return Object.values(data).map(champ => champ.id)
+    // Objeto completo: id, name, title, tags, info, stats, blurb, image.
+    return Object.values(data)
   } catch (error) {
     console.error('Error al obtener los datos:', error)
     throw error

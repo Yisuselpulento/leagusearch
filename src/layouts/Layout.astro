@@ -2,6 +2,7 @@
 import '@fontsource-variable/onest';
 import Footer from '../components/Footer.astro';
 import NavBar from '../components/NavBar.astro';
+import Spinner from '../components/Spinner.astro';
 import { ViewTransitions } from 'astro:transitions';
 interface Props {
 	title: string;
@@ -25,11 +26,34 @@ const { title } = Astro.props;
 	
 	<body class=" dark:text-white  bg-white dark:bg-slate-950 text-gray-800 relative flex justify-center flex-col items-center">
 		<div class="absolute left-0 right-0 top-0 -z-10 h-72 bg-white dark:bg-gradient-to-b dark:from-black from-10% dark:to-slate-950"></div>
+			<div id="page-loader" class="fixed inset-0 z-[100] hidden items-center justify-center bg-white/70 dark:bg-black/70 backdrop-blur-sm">
+				<Spinner size={72} />
+			</div>
 			<NavBar />
 			<slot />
 			<Footer />
 		</body>
 </html>
+<script>
+	// Spinner azul de transición entre páginas (ViewTransitions).
+	// Se muestra al empezar a cargar la siguiente página y se oculta al terminar.
+	const loaderShow = () => {
+		const el = document.getElementById('page-loader');
+		if (!el) return;
+		el.classList.remove('hidden');
+		el.classList.add('flex');
+	};
+	const loaderHide = () => {
+		const el = document.getElementById('page-loader');
+		if (!el) return;
+		el.classList.add('hidden');
+		el.classList.remove('flex');
+	};
+	document.addEventListener('astro:before-preparation', loaderShow);
+	document.addEventListener('astro:after-swap', loaderHide);
+	document.addEventListener('astro:page-load', loaderHide);
+</script>
+
 <style is:global>
 	:root {
 		color-scheme: dark light;
@@ -37,6 +61,6 @@ const { title } = Astro.props;
 	html {
 		font-family: 'Onest Variable', sans-serif;
 	}
-	
+
 </style>
 

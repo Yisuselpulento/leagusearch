@@ -5,22 +5,27 @@ import FavoriteButton from "./FavoriteButton"
 const { champ } = Astro.props
 ---
 
-    <div class="champ-card" data-name={champ.toLowerCase()}>
-         <a
-         class="flex flex-row md:flex-col md:gap-2 gap-4 bg-blue-950 md:bg-transparent  p-1 rounded-lg relative"
-            href={`../champs/${champ}`}
-          >
-          <img
-            class='md:w-[80px] w-[80px] absolute'
-            src={`${DDRAGON_CDN}/img/champion/${champ}.png`}
-            alt={champ}
-            loading="lazy"
-          />
-          <div class="relative cursor-pointer size-[80px] overflow-hidden  before:bg-gradient-to-r before:from-white before:to-gray-700  before:w-[96px] before:h-[130px] before:absolute before:rotate-12 before:opacity-10 before:top-0 before:right-0 transition before:duration-200  before:translate-x-[100px] hover:before:-translate-y-7 hover:before:translate-x-[10px] "></div>
-          <p>{champ}</p>
-
-
-          </a>
-
-      <FavoriteButton champ={champ} client:visible />
+<div class="champ-card flex flex-col justify-between gap-2 p-2 rounded-lg bg-blue-950/40 border border-blue-900/40 dark:bg-blue-950/40 hover:border-blue-600 transition" data-name={champ.name.toLowerCase()}>
+  <a
+    class="group flex flex-row md:flex-col md:items-center gap-3"
+    href={`/champs/${champ.id}`}
+  >
+    <img
+      class='w-[64px] h-[64px] rounded shrink-0 group-hover:scale-105 transition duration-200'
+      src={`${DDRAGON_CDN}/img/champion/${champ.id}.png`}
+      alt={champ.name}
+      loading="lazy"
+    />
+    <div class="flex flex-col md:items-center md:text-center min-w-0">
+      <p class="font-bold truncate w-full">{champ.name}</p>
+      <p class="text-xs text-gray-400 truncate w-full">{champ.title}</p>
+      <div class="flex flex-wrap md:justify-center gap-1 mt-1">
+        {champ.tags?.map(tag => (
+          <span class="text-[10px] px-1.5 py-0.5 rounded bg-blue-800/60 text-blue-100">{tag}</span>
+        ))}
+      </div>
     </div>
+  </a>
+
+  <FavoriteButton champ={champ.id} client:visible />
+</div>

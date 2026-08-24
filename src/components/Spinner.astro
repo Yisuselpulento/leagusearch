@@ -1,0 +1,33 @@
+---
+const { size = 64, label = "Cargando..." } = Astro.props
+---
+
+<div class="ls-spinner-wrap" role="status" aria-live="polite">
+  <svg class="ls-spinner" width={size} height={size} viewBox="0 0 50 50" aria-hidden="true">
+    <circle class="ls-track" cx="25" cy="25" r="20" fill="none" stroke-width="5" />
+    <circle class="ls-head" cx="25" cy="25" r="20" fill="none" stroke-width="5" stroke-linecap="round" />
+  </svg>
+  {label && <span class="sr-only">{label}</span>}
+</div>
+
+<style>
+  .ls-spinner-wrap { display: flex; align-items: center; justify-content: center; }
+  .ls-spinner { animation: ls-rotate 1.4s linear infinite; }
+  .ls-track { stroke: rgba(37, 99, 235, 0.15); }
+  .ls-head {
+    stroke: #2563eb;
+    stroke-dasharray: 90 150;
+    animation: ls-dash 1.4s ease-in-out infinite;
+  }
+  @keyframes ls-rotate { to { transform: rotate(360deg); } }
+  @keyframes ls-dash {
+    0%   { stroke-dashoffset: 120; }
+    50%  { stroke-dashoffset: 30; }
+    100% { stroke-dashoffset: 120; }
+  }
+  .sr-only {
+    position: absolute; width: 1px; height: 1px;
+    padding: 0; margin: -1px; overflow: hidden;
+    clip: rect(0, 0, 0, 0); border: 0;
+  }
+</style>

@@ -10,7 +10,7 @@ const SearchBar = ({ champs = [] }) => {
 
   const filteredChampions = searchTerm.length > 0
     ? champs.filter(champion =>
-      champion?.toLowerCase().includes(searchTerm.toLowerCase())
+      champion.name.toLowerCase().includes(searchTerm.toLowerCase())
     )
     : []
 
@@ -36,18 +36,18 @@ const SearchBar = ({ champs = [] }) => {
         {filteredChampions.length > 0 && (
           <ul className='overflow-auto max-h-[400px] scrollbar scrollbar-thumb-indigo-700 absolute z-10 mt-1 w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg shadow-lg text-left'>
             {filteredChampions.map((champion) => (
-              <li key={champion} className='w-full'>
+              <li key={champion.id} className='w-full'>
                 <a
-                  href={`/champs/${champion}`}
+                  href={`/champs/${champion.id}`}
                   className='w-full hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer flex items-center gap-3 p-3 text-gray-800 dark:text-white'
                 >
                   <img
                     className='w-8 h-8 rounded'
-                    src={`${DDRAGON_CDN}/img/champion/${champion}.png`}
-                    alt={champion}
+                    src={`${DDRAGON_CDN}/img/champion/${champion.id}.png`}
+                    alt={champion.name}
                     loading='lazy'
                   />
-                  {champion}
+                  {champion.name}
                 </a>
               </li>
             ))}

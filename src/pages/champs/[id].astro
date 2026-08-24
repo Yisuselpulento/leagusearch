@@ -1,84 +1,170 @@
 ---
 import Layout from "../../layouts/Layout.astro";
+import Spinner from "../../components/Spinner.astro";
 import { fetchChampionDetails, fetchData } from "../../services/champs";
 import { DDRAGON_CDN, DDRAGON_IMG } from "../../services/constants";
 
 const { id } = Astro.params
 
- let champ = null
-
+let champ = null
 if (id) {
-    champ = await fetchChampionDetails(id)
+  champ = await fetchChampionDetails(id)
 }
- 
-
 
 export async function getStaticPaths() {
-  
- const champs = await fetchData()
-
- return champs.map(champ => ({
-    params: {id: champ}
- }))
- 
+  const champs = await fetchData()
+  return champs.map(champ => ({
+    params: { id: champ.id }
+  }))
 }
+
+const spellKeys = ['Q', 'W', 'E', 'R']
+const infoBars = champ ? [
+  { label: 'Ataque', value: champ.info?.attack ?? 0 },
+  { label: 'Defensa', value: champ.info?.defense ?? 0 },
+  { label: 'Magia', value: champ.info?.magic ?? 0 },
+  { label: 'Dificultad', value: champ.info?.difficulty ?? 0 },
+] : []
+const stats = champ?.stats ?? {}
+const statList = [
+  { label: 'Vida', value: Math.round(stats.hp) },
+  { label: 'Recurso', value: `${Math.round(stats.mp)} ${champ?.partype ?? ''}` },
+  { label: 'Daño de ataque', value: Math.round(stats.attackdamage) },
+  { label: 'Armadura', value: Math.round(stats.armor) },
+  { label: 'Resist. mágica', value: Math.round(stats.spellblock) },
+  { label: 'Vel. movimiento', value: stats.movespeed },
+  { label: 'Rango de ataque', value: stats.attackrange },
+  { label: 'Regen. vida', value: stats.hpregen },
+]
 ---
 
-<Layout title={`${id}`}>
-    <div class='flex flex-col gap-6 w-full md:p-16 pt-16'>
-        {champ
-          ? <div class='flex flex-col gap-5 w-screen md:w-full text-white '>
-            <a
-              class=' hover:text-indigo-500 w-[20px] pl-3 dark:text-white text-gray-800 text-lg ml-2'
-              href='/champs'
-            >Atras</a>
-  
-            <div class="flex flex-col gap-5 relative shadow-lg">
+<Layout title={champ ? champ.name : id}>
+  <div class='flex flex-col gap-8 w-full md:p-16 p-3 pt-20 max-w-[1100px]'>
+    {champ
+      ? <Fragment>
+        <a class='hover:text-indigo-500 dark:text-white text-gray-800 text-lg w-fit' href='/champs'>&larr; Atras</a>
 
-              <div class=' p-10 bg-cover bg-no-repeat rounded-lg w-full h-full absolute opacity-70' style={{ backgroundImage: `url('${DDRAGON_IMG}/champion/splash/${champ.id}_0.jpg')` }}>
-
-              </div>
-              <div class="  bg-gradient-to-t from-black via-transparent to-black  flex relative md:p-10 p-4 flex-col gap-6">
-               <div class='flex gap-5'>
-  
-                  <img
-                    class='border border-yellow-500 rounded h-[100px]'
-                    src={`${DDRAGON_CDN}/img/champion/${champ.id}.png`}
-                    alt={champ.name}
-                  />
-                  <div class='flex flex-col gap-3'>
-                    <p class='text-2xl font-bold'> {champ.name}</p>
-                    <div class='flex flex-wrap md:gap-5 gap-3'>
-                      {champ.spells?.map(spell  => (
-                              <img
-                              class='md:w-[50px] w-[40px]'
-                                src={`${DDRAGON_CDN}/img/spell/${spell.image.full}`}
-                                alt={spell.name}
-                              />
-                      ))}
-                    </div>
-                  </div>
-               </div>
-                <p>{champ.lore}</p> 
-             </div>
+        {/* HERO */}
+        <div class="flex flex-col gap-5 relative shadow-lg rounded-lg overflow-hidden">
+          <div class='bg-cover bg-center rounded-lg w-full h-full absolute opacity-60' style={{ backgroundImage: `url('${DDRAGON_IMG}/champion/splash/${champ.id}_0.jpg')` }}></div>
+          <div class="bg-gradient-to-t from-black via-black/70 to-black/40 flex relative md:p-10 p-4 flex-col gap-6 text-white">
+            <div class='flex gap-5 items-center flex-wrap'>
+              <img
+                class='border border-yellow-500 rounded h-[100px] w-[100px]'
+                src={`${DDRAGON_CDN}/img/champion/${champ.id}.png`}
+                alt={champ.name}
+              />
+              <div class='flex flex-col gap-2'>
+                <p class='text-3xl font-bold'>{champ.name}</p>
+                <p class='text-lg text-gray-300 italic'>{champ.title}</p>
+                <div class='flex flex-wrap gap-2'>
+                  {champ.tags?.map(tag => (
+                    <span class='text-xs px-2 py-1 rounded bg-blue-700 text-white'>{tag}</span>
+                  ))}
+                  <span class='text-xs px-2 py-1 rounded bg-slate-700 text-white'>{champ.partype}</span>
                 </div>
-      
-  
-            <div class='flex flex-row gap-5 w-full md:w-[1000px] overflow-auto scrollbar scrollbar-thumb-indigo-700 p-4 shadow-lg'>
-              {champ.skins?.map( skin  => (
-               <div class="  border border-yellow-300 rounded min-h-[210px] min-w-[100px] overflow-hidden"> 
-                      <img
-                        class='object-cover w-full h-full duration-300 hover:scale-110'
-                        src={`${DDRAGON_IMG}/champion/loading/${champ.id}_${skin.num}.jpg`}
-                        alt={`${champ.name} ${skin.name}`}
-                        loading="lazy"
-                   />
-                </div> 
-  
+              </div>
+            </div>
+            <p class='max-w-[800px] text-sm text-gray-200'>{champ.lore}</p>
+          </div>
+        </div>
+
+        {/* INFO BARS + STATS */}
+        <div class='grid md:grid-cols-2 gap-6'>
+          <div class='dark:bg-black/30 bg-gray-100 rounded-lg border dark:border-gray-800 border-gray-200 p-5 flex flex-col gap-3'>
+            <h2 class='text-xl font-bold'>Perfil</h2>
+            {infoBars.map(bar => (
+              <div class='flex items-center gap-3'>
+                <span class='w-24 text-sm text-gray-400'>{bar.label}</span>
+                <div class='flex-1 h-2 rounded bg-gray-300 dark:bg-gray-700 overflow-hidden'>
+                  <div class='h-full bg-blue-600 rounded' style={`width:${bar.value * 10}%`}></div>
+                </div>
+                <span class='w-8 text-right text-sm'>{bar.value}</span>
+              </div>
+            ))}
+          </div>
+          <div class='dark:bg-black/30 bg-gray-100 rounded-lg border dark:border-gray-800 border-gray-200 p-5'>
+            <h2 class='text-xl font-bold mb-3'>Estadisticas base</h2>
+            <div class='grid grid-cols-2 gap-x-6 gap-y-2 text-sm'>
+              {statList.map(s => (
+                <div class='flex justify-between border-b dark:border-gray-800 border-gray-200 py-1'>
+                  <span class='text-gray-400'>{s.label}</span>
+                  <span class='font-bold'>{s.value}</span>
+                </div>
               ))}
             </div>
           </div>
-          : <p>loading...</p>}
-      </div>
+        </div>
 
+        {/* HABILIDADES */}
+        <div class='flex flex-col gap-4'>
+          <h2 class='text-2xl font-bold'>Habilidades</h2>
+          {champ.passive && (
+            <div class='flex gap-4 dark:bg-black/30 bg-gray-100 rounded-lg border dark:border-gray-800 border-gray-200 p-4'>
+              <img class='w-[56px] h-[56px] rounded shrink-0' src={`${DDRAGON_CDN}/img/passive/${champ.passive.image.full}`} alt={champ.passive.name} />
+              <div class='flex flex-col gap-1'>
+                <p class='font-bold'><span class='text-blue-500'>Pasiva</span> · {champ.passive.name}</p>
+                <p class='text-sm text-gray-400' set:html={champ.passive.description}></p>
+              </div>
+            </div>
+          )}
+          {champ.spells?.map((spell, i) => (
+            <div class='flex gap-4 dark:bg-black/30 bg-gray-100 rounded-lg border dark:border-gray-800 border-gray-200 p-4'>
+              <img class='w-[56px] h-[56px] rounded shrink-0' src={`${DDRAGON_CDN}/img/spell/${spell.image.full}`} alt={spell.name} />
+              <div class='flex flex-col gap-1'>
+                <p class='font-bold'><span class='text-blue-500'>{spellKeys[i]}</span> · {spell.name}</p>
+                <div class='flex gap-4 text-xs text-gray-400'>
+                  <span>Enfriamiento: {spell.cooldownBurn}s</span>
+                  {spell.costBurn && spell.costBurn !== '0' && <span>Coste: {spell.costBurn}</span>}
+                </div>
+                <p class='text-sm text-gray-400' set:html={spell.description}></p>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* TIPS */}
+        {(champ.allytips?.length > 0 || champ.enemytips?.length > 0) && (
+          <div class='grid md:grid-cols-2 gap-6'>
+            {champ.allytips?.length > 0 && (
+              <div class='dark:bg-black/30 bg-gray-100 rounded-lg border dark:border-gray-800 border-gray-200 p-5'>
+                <h2 class='text-lg font-bold mb-2 text-green-500'>Consejos jugando con {champ.name}</h2>
+                <ul class='list-disc pl-5 text-sm text-gray-400 flex flex-col gap-2'>
+                  {champ.allytips.map(tip => <li>{tip}</li>)}
+                </ul>
+              </div>
+            )}
+            {champ.enemytips?.length > 0 && (
+              <div class='dark:bg-black/30 bg-gray-100 rounded-lg border dark:border-gray-800 border-gray-200 p-5'>
+                <h2 class='text-lg font-bold mb-2 text-red-500'>Consejos jugando contra {champ.name}</h2>
+                <ul class='list-disc pl-5 text-sm text-gray-400 flex flex-col gap-2'>
+                  {champ.enemytips.map(tip => <li>{tip}</li>)}
+                </ul>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* SKINS */}
+        <div class='flex flex-col gap-3'>
+          <h2 class='text-2xl font-bold'>Aspectos</h2>
+          <div class='flex flex-row gap-5 w-full overflow-x-auto scrollbar scrollbar-thumb-indigo-700 pb-4'>
+            {champ.skins?.map(skin => (
+              <div class="flex flex-col gap-2 shrink-0">
+                <div class="border border-yellow-300 rounded h-[210px] w-[120px] overflow-hidden">
+                  <img
+                    class='object-cover w-full h-full duration-300 hover:scale-110'
+                    src={`${DDRAGON_IMG}/champion/loading/${champ.id}_${skin.num}.jpg`}
+                    alt={`${champ.name} ${skin.name}`}
+                    loading="lazy"
+                  />
+                </div>
+                <p class='text-xs text-center text-gray-400 w-[120px] truncate'>{skin.name === 'default' ? champ.name : skin.name}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </Fragment>
+      : <div class='flex justify-center py-20'><Spinner size={72} /></div>}
+  </div>
 </Layout>
