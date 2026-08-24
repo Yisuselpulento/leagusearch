@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'preact/hooks'
-import { DDRAGON_CDN } from '../services/constants'
+import { ddImg } from '../services/constants'
 
 const readFavorites = () => {
   try {
@@ -9,7 +9,7 @@ const readFavorites = () => {
   }
 }
 
-const FavoritesList = () => {
+const FavoritesList = ({ version }) => {
   const [favorites, setFavorites] = useState([])
   const [ready, setReady] = useState(false)
 
@@ -45,7 +45,7 @@ const FavoritesList = () => {
           >
             <img
               class='w-[80px] h-[80px]'
-              src={`${DDRAGON_CDN}/img/champion/${champ}.png`}
+              src={ddImg(version, 'champion', `${champ}.png`)}
               alt={champ}
               loading='lazy'
             />

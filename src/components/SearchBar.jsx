@@ -1,7 +1,7 @@
 import { useState } from 'preact/hooks'
-import { DDRAGON_CDN } from '../services/constants'
+import { ddImg } from '../services/constants'
 
-const SearchBar = ({ champs = [] }) => {
+const SearchBar = ({ champs = [], version }) => {
   const [searchTerm, setSearchTerm] = useState('')
 
   const handleSearchChange = (e) => {
@@ -43,7 +43,7 @@ const SearchBar = ({ champs = [] }) => {
                 >
                   <img
                     className='w-8 h-8 rounded'
-                    src={`${DDRAGON_CDN}/img/champion/${champion.id}.png`}
+                    src={ddImg(version, 'champion', `${champion.id}.png`)}
                     alt={champion.name}
                     loading='lazy'
                   />

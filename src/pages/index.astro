@@ -1,9 +1,10 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import SearchBar from '../components/SearchBar'
-import { fetchData } from '../services/champs'
+import { fetchData, getVersion } from '../services/champs'
 
 const champs = (await fetchData()).map(c => ({ id: c.id, name: c.name }))
+const version = await getVersion()
 ---
 
 <Layout title="League of Search">
@@ -12,7 +13,7 @@ const champs = (await fetchData()).map(c => ({ id: c.id, name: c.name }))
 
 		<div class='relative z-10 p-5 md:p-16  w-full  flex flex-col md:flex-row items-center text-center md:justify-between gap-10 justify-center'>
 		  <div class='w-full flex justify-center items-center flex-col gap-7'>
-			<SearchBar champs={champs} client:load />
+			<SearchBar champs={champs} version={version} client:load />
 		<img src='./lollogo.webp' alt='logo de league of legends' class='w-[200px] md:w-[400px] h-[76px] md:h-[150px]' /> 
   
 		  </div> 

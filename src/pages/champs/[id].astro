@@ -1,15 +1,20 @@
 ---
 import Layout from "../../layouts/Layout.astro";
 import Spinner from "../../components/Spinner.astro";
-import { fetchChampionDetails, fetchData } from "../../services/champs";
-import { DDRAGON_CDN, DDRAGON_IMG } from "../../services/constants";
+import { fetchChampionDetails, fetchData, fetchMerakiChampion, getVersion } from "../../services/champs";
+import { ddImg, DDRAGON_IMG } from "../../services/constants";
 
 const { id } = Astro.params
+
+const version = await getVersion()
 
 let champ = null
 if (id) {
   champ = await fetchChampionDetails(id)
 }
+
+// Enriquecimiento Meraki (puede ser null en los campeones más nuevos).
+const meraki = id ? await fetchMerakiChampion(id) : null
 
 export async function getStaticPaths() {
   const champs = await fetchData()
@@ -19,6 +24,17 @@ export async function getStaticPaths() {
 }
 
 const spellKeys = ['Q', 'W', 'E', 'R']
+
+// Valoraciones de Meraki (escala 1-3) -> barras.
+const ratingLabels = {
+  damage: 'Daño', toughness: 'Resistencia', control: 'Control',
+  mobility: 'Movilidad', utility: 'Utilidad', difficulty: 'Dificultad'
+}
+const ratings = meraki?.attributeRatings
+  ? Object.entries(ratingLabels)
+      .filter(([k]) => meraki.attributeRatings[k] != null)
+      .map(([k, label]) => ({ label, value: meraki.attributeRatings[k] }))
+  : []
 const infoBars = champ ? [
   { label: 'Ataque', value: champ.info?.attack ?? 0 },
   { label: 'Defensa', value: champ.info?.defense ?? 0 },
@@ -51,7 +67,7 @@ const statList = [
             <div class='flex gap-5 items-center flex-wrap'>
               <img
                 class='border border-yellow-500 rounded h-[100px] w-[100px]'
-                src={`${DDRAGON_CDN}/img/champion/${champ.id}.png`}
+                src={ddImg(version, 'champion', `${champ.id}.png`)}
                 alt={champ.name}
               />
               <div class='flex flex-col gap-2'>
@@ -68,6 +84,49 @@ const statList = [
             <p class='max-w-[800px] text-sm text-gray-200'>{champ.lore}</p>
           </div>
         </div>
+
+        {/* ENRIQUECIMIENTO MERAKI (roles, tipo, precio, valoraciones) */}
+        {meraki && (
+          <div class='dark:bg-black/30 bg-gray-100 rounded-lg border dark:border-gray-800 border-gray-200 p-5 flex flex-col gap-4'>
+            <div class='flex flex-wrap gap-x-8 gap-y-3 text-sm'>
+              {meraki.roles?.length > 0 && (
+                <div class='flex flex-col gap-1'>
+                  <span class='text-gray-400'>Roles</span>
+                  <div class='flex flex-wrap gap-2'>
+                    {meraki.roles.map(r => <span class='text-xs px-2 py-1 rounded bg-blue-800/60 text-blue-100 capitalize'>{r.toLowerCase()}</span>)}
+                  </div>
+                </div>
+              )}
+              {meraki.attackType && (
+                <div class='flex flex-col gap-1'>
+                  <span class='text-gray-400'>Tipo de daño</span>
+                  <span class='font-bold capitalize'>{meraki.attackType.toLowerCase()} · {meraki.adaptiveType?.replace('_DAMAGE','').toLowerCase()}</span>
+                </div>
+              )}
+              {meraki.price && (
+                <div class='flex flex-col gap-1'>
+                  <span class='text-gray-400'>Precio</span>
+                  <span class='font-bold'>{meraki.price.blueEssence} BE · {meraki.price.rp} RP</span>
+                </div>
+              )}
+            </div>
+            {ratings.length > 0 && (
+              <div class='flex flex-col gap-2'>
+                <span class='text-gray-400 text-sm'>Valoracion</span>
+                <div class='grid grid-cols-2 sm:grid-cols-3 gap-x-6 gap-y-2'>
+                  {ratings.map(r => (
+                    <div class='flex items-center gap-2'>
+                      <span class='w-24 text-xs text-gray-400'>{r.label}</span>
+                      <div class='flex-1 h-2 rounded bg-gray-300 dark:bg-gray-700 overflow-hidden'>
+                        <div class='h-full bg-indigo-500 rounded' style={`width:${(r.value / 3) * 100}%`}></div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
 
         {/* INFO BARS + STATS */}
         <div class='grid md:grid-cols-2 gap-6'>
@@ -101,7 +160,7 @@ const statList = [
           <h2 class='text-2xl font-bold'>Habilidades</h2>
           {champ.passive && (
             <div class='flex gap-4 dark:bg-black/30 bg-gray-100 rounded-lg border dark:border-gray-800 border-gray-200 p-4'>
-              <img class='w-[56px] h-[56px] rounded shrink-0' src={`${DDRAGON_CDN}/img/passive/${champ.passive.image.full}`} alt={champ.passive.name} />
+              <img class='w-[56px] h-[56px] rounded shrink-0' src={ddImg(version, 'passive', champ.passive.image.full)} alt={champ.passive.name} />
               <div class='flex flex-col gap-1'>
                 <p class='font-bold'><span class='text-blue-500'>Pasiva</span> · {champ.passive.name}</p>
                 <p class='text-sm text-gray-400' set:html={champ.passive.description}></p>
@@ -110,7 +169,7 @@ const statList = [
           )}
           {champ.spells?.map((spell, i) => (
             <div class='flex gap-4 dark:bg-black/30 bg-gray-100 rounded-lg border dark:border-gray-800 border-gray-200 p-4'>
-              <img class='w-[56px] h-[56px] rounded shrink-0' src={`${DDRAGON_CDN}/img/spell/${spell.image.full}`} alt={spell.name} />
+              <img class='w-[56px] h-[56px] rounded shrink-0' src={ddImg(version, 'spell', spell.image.full)} alt={spell.name} />
               <div class='flex flex-col gap-1'>
                 <p class='font-bold'><span class='text-blue-500'>{spellKeys[i]}</span> · {spell.name}</p>
                 <div class='flex gap-4 text-xs text-gray-400'>

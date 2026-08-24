@@ -1,8 +1,8 @@
 ---
-import { DDRAGON_CDN } from "../services/constants"
+import { ddImg } from "../services/constants"
 import FavoriteButton from "./FavoriteButton"
 
-const { champ } = Astro.props
+const { champ, version } = Astro.props
 ---
 
 <div class="champ-card flex flex-col justify-between gap-2 p-2 rounded-lg bg-blue-950/40 border border-blue-900/40 dark:bg-blue-950/40 hover:border-blue-600 transition" data-name={champ.name.toLowerCase()}>
@@ -12,7 +12,7 @@ const { champ } = Astro.props
   >
     <img
       class='w-[64px] h-[64px] rounded shrink-0 group-hover:scale-105 transition duration-200'
-      src={`${DDRAGON_CDN}/img/champion/${champ.id}.png`}
+      src={ddImg(version, 'champion', `${champ.id}.png`)}
       alt={champ.name}
       loading="lazy"
     />

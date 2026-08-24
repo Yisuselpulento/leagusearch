@@ -1,7 +1,7 @@
 ---
-import { DDRAGON_CDN } from "../services/constants"
+import { ddImg } from "../services/constants"
 
-const { item } = Astro.props
+const { item, version } = Astro.props
 ---
 
 <a
@@ -12,7 +12,7 @@ title={item.name}
 >
 <img
   class='w-[50px] h-[50px] absolute'
-  src={`${DDRAGON_CDN}/img/item/${item.image.full}`}
+  src={ddImg(version, 'item', item.image.full)}
   alt={item.name}
   loading="lazy"
 />

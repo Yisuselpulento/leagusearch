@@ -2,9 +2,10 @@
 import CardChamp from "../components/CardChamp.astro";
 import FilterIcon from "../components/icons/FilterIcon.astro";
 import Layout from "../layouts/Layout.astro";
-import { fetchData } from "../services/champs";
+import { fetchData, getVersion } from "../services/champs";
 
 const champs = await fetchData()
+const version = await getVersion()
 ---
 
 <Layout title="champs">
@@ -26,7 +27,7 @@ const champs = await fetchData()
 
       <div id='champ-grid' class='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 content-start p-3 mb-4 dark:bg-black dark:bg-opacity-30 bg-gray-200 max-h-[1000px] overflow-auto scrollbar scrollbar-thumb-indigo-700 rounded border-[1px] dark:border-gray-700 border-gray-200 shadow'>
         {champs?.map( champ => (
-          <CardChamp champ={champ}  />
+          <CardChamp champ={champ} version={version} />
         ))}
       </div>
       <p id='champ-empty' class='hidden text-gray-400'>No se encontraron campeones.</p>

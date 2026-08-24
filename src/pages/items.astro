@@ -2,9 +2,10 @@
 import CardItems from "../components/CardItems.astro";
 import FilterIcon from "../components/icons/FilterIcon.astro";
 import Layout from "../layouts/Layout.astro";
-import { fetchDataItems } from "../services/champs";
+import { fetchDataItems, getVersion } from "../services/champs";
 
 const items = await fetchDataItems()
+const version = await getVersion()
 ---
 
 <Layout title="items">
@@ -25,7 +26,7 @@ const items = await fetchDataItems()
         </div>
         <div id='item-grid' class='grid gap-3 content-start justify-start p-5 mb-5 rounded dark:bg-black dark:bg-opacity-30 bg-gray-100 max-h-[1000px] md:w-[1500px] overflow-auto scrollbar scrollbar-thumb-indigo-700 w-full border-[1px] dark:border-gray-700 border-gray-200' style='grid-template-columns: repeat(auto-fill, 50px);'>
           {items?.map( item => (
-            <CardItems item={item}  />
+            <CardItems item={item} version={version} />
           ))}
 
         </div>

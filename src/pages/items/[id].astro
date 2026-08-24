@@ -1,7 +1,9 @@
 ---
 import Layout from "../../layouts/Layout.astro";
-import { fetchDataItems } from "../../services/champs";
-import { DDRAGON_CDN } from "../../services/constants";
+import { fetchDataItems, getVersion } from "../../services/champs";
+import { ddImg } from "../../services/constants";
+
+const version = await getVersion()
 
 export async function getStaticPaths() {
   const items = await fetchDataItems()
@@ -54,7 +56,7 @@ const maps = Object.entries(item.maps ?? {})
     <div class='flex flex-col md:flex-row gap-6 items-start dark:bg-black/30 bg-gray-100 rounded-lg border dark:border-gray-800 border-gray-200 p-6'>
       <img
         class='border border-yellow-400 rounded w-[80px] h-[80px] shrink-0'
-        src={`${DDRAGON_CDN}/img/item/${item.image.full}`}
+        src={ddImg(version, 'item', item.image.full)}
         alt={item.name}
       />
       <div class='flex flex-col gap-3'>
@@ -96,7 +98,7 @@ const maps = Object.entries(item.maps ?? {})
         <div class='flex flex-wrap gap-4'>
           {fromItems.map(comp => (
             <a href={`/items/${comp.id}`} class='flex flex-col items-center gap-1 w-[70px] hover:scale-105 transition' title={comp.name}>
-              <img class='w-[50px] h-[50px] border border-blue-900 rounded' src={`${DDRAGON_CDN}/img/item/${comp.image.full}`} alt={comp.name} loading='lazy' />
+              <img class='w-[50px] h-[50px] border border-blue-900 rounded' src={ddImg(version, 'item', comp.image.full)} alt={comp.name} loading='lazy' />
               <span class='text-[11px] text-center text-gray-400 truncate w-full'>{comp.name}</span>
               <span class='text-[11px] text-yellow-400'>{comp.gold?.total}</span>
             </a>
@@ -111,7 +113,7 @@ const maps = Object.entries(item.maps ?? {})
         <div class='flex flex-wrap gap-4'>
           {intoItems.map(build => (
             <a href={`/items/${build.id}`} class='flex flex-col items-center gap-1 w-[70px] hover:scale-105 transition' title={build.name}>
-              <img class='w-[50px] h-[50px] border border-blue-900 rounded' src={`${DDRAGON_CDN}/img/item/${build.image.full}`} alt={build.name} loading='lazy' />
+              <img class='w-[50px] h-[50px] border border-blue-900 rounded' src={ddImg(version, 'item', build.image.full)} alt={build.name} loading='lazy' />
               <span class='text-[11px] text-center text-gray-400 truncate w-full'>{build.name}</span>
             </a>
           ))}

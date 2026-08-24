@@ -1,6 +1,9 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import FavoritesList from "../components/FavoritesList";
+import { getVersion } from "../services/champs";
+
+const version = await getVersion()
 ---
 
 <Layout title="favorites">
@@ -9,6 +12,6 @@ import FavoritesList from "../components/FavoritesList";
           <p class='text-3xl font-bold'>Tus Favoritos</p>
           <p class='text-lg dark:text-gray-400 text-gray-500'>Los campeones que guardaste</p>
         </div>
-        <FavoritesList client:load />
+        <FavoritesList version={version} client:load />
     </div>
 </Layout>
