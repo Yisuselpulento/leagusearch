@@ -17,6 +17,7 @@ const items = await fetchDataItems()
           <FilterIcon class="size-6" />
           <p class='font-bold hidden md:block'>Filtrar</p>
           <input
+            id='item-filter'
             type='search'
              class='border-1 block h-12 w-[300px] text-black  rounded-md border border-double bg-gray-300 border-slate-800 border-transparent dark:bg-[linear-gradient(#000,#000),linear-gradient(to_right,#334454,#334454)]	bg-origin-border px-3 py-2 dark:text-slate-200 transition-all duration-500 [background-clip:padding-box,_border-box] placeholder:text-slate-500 focus:bg-[linear-gradient(#ddd,#ddd),linear-gradient(to_right,#2344A1,#0A1B4B)]  dark:focus:bg-[linear-gradient(#000,#000),linear-gradient(to_right,#2344A1,#0A1B4B)] focus:outline-none '
             placeholder='Search items...'
@@ -26,8 +27,22 @@ const items = await fetchDataItems()
           {items?.map( item => (
             <CardItems item={item}  />
           ))}
-  
+
         </div>
       </div>
-  
+
+      <script>
+        document.addEventListener('astro:page-load', () => {
+          const input = document.getElementById('item-filter')
+          if (!input) return
+          const cards = Array.from(document.querySelectorAll('.item-card'))
+          input.addEventListener('input', () => {
+            const term = input.value.toLowerCase().trim()
+            cards.forEach(card => {
+              const name = card.getAttribute('data-name') || ''
+              card.style.display = name.includes(term) ? '' : 'none'
+            })
+          })
+        })
+      </script>
 </Layout>

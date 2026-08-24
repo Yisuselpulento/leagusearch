@@ -1,0 +1,52 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { fetchDataItems } from "../../services/champs";
+import { DDRAGON_CDN } from "../../services/constants";
+
+export async function getStaticPaths() {
+  const items = await fetchDataItems()
+  // Pasamos el item por props: evita volver a pedir/filtrar en cada página.
+  return items.map(item => ({ params: { id: item.id }, props: { item } }))
+}
+
+const { item } = Astro.props
+---
+
+<Layout title={item.name}>
+  <div class='flex flex-col gap-6 w-full md:p-16 p-4 pt-20 max-w-[900px]'>
+    <a
+      class='hover:text-indigo-500 dark:text-white text-gray-800 text-lg'
+      href='/items'
+    >Atras</a>
+
+    <div class='flex flex-col md:flex-row gap-6 items-start dark:bg-black dark:bg-opacity-30 bg-gray-100 rounded-lg border dark:border-gray-800 border-gray-200 p-6'>
+      <img
+        class='border border-yellow-400 rounded w-[80px] h-[80px]'
+        src={`${DDRAGON_CDN}/img/item/${item.image.full}`}
+        alt={item.name}
+      />
+      <div class='flex flex-col gap-3'>
+        <h1 class='text-3xl font-bold'>{item.name}</h1>
+        {item.plaintext && <p class='text-gray-500 dark:text-gray-400'>{item.plaintext}</p>}
+        <div class='flex gap-4 text-sm'>
+          <span class='text-yellow-400 font-bold'>Costo total: {item.gold?.total ?? 0}</span>
+          <span class='text-gray-500 dark:text-gray-400'>Venta: {item.gold?.sell ?? 0}</span>
+        </div>
+        {item.tags?.length > 0 && (
+          <div class='flex flex-wrap gap-2'>
+            {item.tags.map(tag => (
+              <span class='text-xs px-2 py-1 rounded bg-blue-900 text-white'>{tag}</span>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+
+    {item.description && (
+      <div
+        class='dark:bg-black dark:bg-opacity-20 bg-gray-100 rounded-lg border dark:border-gray-800 border-gray-200 p-6 leading-relaxed'
+        set:html={item.description}
+      />
+    )}
+  </div>
+</Layout>

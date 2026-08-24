@@ -1,9 +1,14 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import FavoritesList from "../components/FavoritesList";
 ---
 
 <Layout title="favorites">
-    <div class="min-h-screen p-20">
-        <p>favoritos</p>
+    <div class="min-h-screen w-full md:p-24 p-4 pt-20 flex flex-col gap-6">
+        <div>
+          <p class='text-3xl font-bold'>Tus Favoritos</p>
+          <p class='text-lg dark:text-gray-400 text-gray-500'>Los campeones que guardaste</p>
+        </div>
+        <FavoritesList client:load />
     </div>
 </Layout>

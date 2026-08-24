@@ -1,6 +1,7 @@
 ---
 import Layout from "../../layouts/Layout.astro";
 import { fetchChampionDetails, fetchData } from "../../services/champs";
+import { DDRAGON_CDN, DDRAGON_IMG } from "../../services/constants";
 
 const { id } = Astro.params
 
@@ -34,15 +35,16 @@ export async function getStaticPaths() {
   
             <div class="flex flex-col gap-5 relative shadow-lg">
 
-              <div class=' p-10 bg-cover bg-no-repeat rounded-lg w-full h-full absolute opacity-70' style={{ backgroundImage: `url('https://ddragon.leagueoflegends.com/cdn/img/champion/splash/${champ.id}_0.jpg')` }}>
-               
+              <div class=' p-10 bg-cover bg-no-repeat rounded-lg w-full h-full absolute opacity-70' style={{ backgroundImage: `url('${DDRAGON_IMG}/champion/splash/${champ.id}_0.jpg')` }}>
+
               </div>
               <div class="  bg-gradient-to-t from-black via-transparent to-black  flex relative md:p-10 p-4 flex-col gap-6">
                <div class='flex gap-5'>
   
                   <img
                     class='border border-yellow-500 rounded h-[100px]'
-                    src={`https://ddragon.leagueoflegends.com/cdn/14.6.1/img/champion/${champ.id}.png`}
+                    src={`${DDRAGON_CDN}/img/champion/${champ.id}.png`}
+                    alt={champ.name}
                   />
                   <div class='flex flex-col gap-3'>
                     <p class='text-2xl font-bold'> {champ.name}</p>
@@ -50,8 +52,8 @@ export async function getStaticPaths() {
                       {champ.spells?.map(spell  => (
                               <img
                               class='md:w-[50px] w-[40px]'
-
-                                src={`https://ddragon.leagueoflegends.com/cdn/14.6.1/img/spell/${spell.image.full}`}
+                                src={`${DDRAGON_CDN}/img/spell/${spell.image.full}`}
+                                alt={spell.name}
                               />
                       ))}
                     </div>
@@ -67,7 +69,9 @@ export async function getStaticPaths() {
                <div class="  border border-yellow-300 rounded min-h-[210px] min-w-[100px] overflow-hidden"> 
                       <img
                         class='object-cover w-full h-full duration-300 hover:scale-110'
-                        src={`https://ddragon.leagueoflegends.com/cdn/img/champion/loading/${champ.id}_${skin.num}.jpg`}
+                        src={`${DDRAGON_IMG}/champion/loading/${champ.id}_${skin.num}.jpg`}
+                        alt={`${champ.name} ${skin.name}`}
+                        loading="lazy"
                    />
                 </div> 
   

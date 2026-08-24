@@ -1,15 +1,18 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import SearchBar from '../components/SearchBar'
+import { fetchData } from '../services/champs'
+
+const champs = await fetchData()
 ---
 
 <Layout title="League of Search">
 	<main class='relative flex w-full min-h-[1000px] bg-gradient-to-t dark:from-black dark:via-transparent dark:to-black  '>
 		<div class='absolute inset-0 bg-hero-movile md:bg-hero-pattern bg-cover bg-center bg-no-repeat opacity-80 dark:opacity-10' />
-		
+
 		<div class='relative z-10 p-5 md:p-16  w-full  flex flex-col md:flex-row items-center text-center md:justify-between gap-10 justify-center'>
 		  <div class='w-full flex justify-center items-center flex-col gap-7'>
-			<SearchBar />
+			<SearchBar champs={champs} client:load />
 		<img src='./lollogo.webp' alt='logo de league of legends' class='w-[200px] md:w-[400px] h-[76px] md:h-[150px]' /> 
   
 		  </div> 
