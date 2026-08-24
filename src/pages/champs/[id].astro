@@ -215,14 +215,19 @@ const realSkins = (champ?.skins ?? []).filter(s => s.parentSkin === undefined)
           <div class='flex flex-row gap-5 w-full overflow-x-auto scrollbar scrollbar-thumb-indigo-700 pb-4'>
             {realSkins.map(skin => (
               <div class="flex flex-col gap-2 shrink-0">
-                <div class="border border-yellow-300 rounded h-[210px] w-[120px] overflow-hidden">
+                <button
+                  type="button"
+                  class="skin-tile border border-yellow-300 rounded h-[210px] w-[120px] overflow-hidden cursor-zoom-in block group"
+                  data-splash={`${DDRAGON_IMG}/champion/splash/${champ.id}_${skin.num}.jpg`}
+                  data-title={skin.name === 'default' ? champ.name : skin.name}
+                >
                   <img
-                    class='object-cover w-full h-full duration-300 hover:scale-110'
+                    class='object-cover w-full h-full duration-300 group-hover:scale-110'
                     src={`${DDRAGON_IMG}/champion/loading/${champ.id}_${skin.num}.jpg`}
                     alt={`${champ.name} ${skin.name}`}
                     loading="lazy"
                   />
-                </div>
+                </button>
                 <p class='text-xs text-center text-gray-400 w-[120px] truncate'>{skin.name === 'default' ? champ.name : skin.name}</p>
               </div>
             ))}
@@ -231,4 +236,64 @@ const realSkins = (champ?.skins ?? []).filter(s => s.parentSkin === undefined)
       </Fragment>
       : <div class='flex justify-center py-20'><Spinner size={72} /></div>}
   </div>
+
+  {/* LIGHTBOX de splash art */}
+  <div id="skin-lightbox" class="fixed inset-0 z-[110] hidden items-center justify-center bg-black/90 p-4 cursor-zoom-out backdrop-blur-sm">
+    <div class="relative w-full max-w-[1215px]">
+      <img id="skin-lightbox-img" class="w-full h-auto rounded-lg shadow-2xl" src="" alt="" />
+      <p id="skin-lightbox-title" class="text-center text-white mt-3 text-lg"></p>
+      <button
+        id="skin-lightbox-close"
+        type="button"
+        aria-label="Cerrar"
+        class="absolute -top-4 -right-4 bg-white text-black rounded-full w-10 h-10 flex items-center justify-center font-bold text-xl shadow-lg hover:bg-gray-200"
+      >&times;</button>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('astro:page-load', () => {
+      const box = document.getElementById('skin-lightbox')
+      if (!box) return
+      const img = document.getElementById('skin-lightbox-img')
+      const title = document.getElementById('skin-lightbox-title')
+
+      const close = () => {
+        box.classList.add('hidden')
+        box.classList.remove('flex')
+        img.setAttribute('src', '')
+        document.body.style.overflow = ''
+      }
+      const open = (src, t) => {
+        img.setAttribute('src', src)
+        img.setAttribute('alt', t || '')
+        title.textContent = t || ''
+        box.classList.remove('hidden')
+        box.classList.add('flex')
+        document.body.style.overflow = 'hidden'
+      }
+
+      document.querySelectorAll('.skin-tile').forEach(tile => {
+        tile.addEventListener('click', () => open(tile.dataset.splash, tile.dataset.title))
+      })
+      // Cerrar al hacer clic en el overlay (fondo, imagen o boton).
+      box.addEventListener('click', close)
+
+      // Escape global, registrado una sola vez.
+      if (!window.__skinEscBound) {
+        window.__skinEscBound = true
+        document.addEventListener('keydown', (e) => {
+          if (e.key !== 'Escape') return
+          const b = document.getElementById('skin-lightbox')
+          if (b && !b.classList.contains('hidden')) {
+            b.classList.add('hidden')
+            b.classList.remove('flex')
+            const i = document.getElementById('skin-lightbox-img')
+            if (i) i.setAttribute('src', '')
+            document.body.style.overflow = ''
+          }
+        })
+      }
+    })
+  </script>
 </Layout>
